@@ -10,15 +10,19 @@ pipeline {
     post {
         always {
             echo 'This will always run'
+	    mail to: 'aoxiaotian@foxmail.com',
+	         subject: "Pipelin aways sending: ${currentBuild.fullDisplayName}",
+		 body: "${env.BUILD_URL} aways send this"
         }
         success {
             echo 'This will run only if successful'
         }
-        failure {
-            echo 'This will run only if failed'
-        }
+	post {
+	    mail to: 'aoxiaotian@foxmail.com',
+	         subject: "Failed Pipelin: ${currentBuild.fullDisplayName}",
+		 body: "Somethings is wrong with ${env.BUILD_URL}"
+	}
         unstable {
-            echo 'This will run only if the run was marked as unstable'
         }
         changed {
             echo 'This will run only if the state of the Pipeline has changed'
@@ -26,3 +30,4 @@ pipeline {
         }
     }
 }
+
