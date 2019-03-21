@@ -1,33 +1,30 @@
 pipeline {
     agent any
     stages {
-        stage('Test') {
+        stage('No-op') {
             steps {
-                sh 'echo "Fail!"; exit 1'
+                sh 'ls'
             }
         }
     }
     post {
         always {
-            echo 'This will always run'
-	    mail to: 'aoxiaotian@foxmail.com',
-	         subject: "Pipelin aways sending: ${currentBuild.fullDisplayName}",
-		 body: "${env.BUILD_URL} aways send this"
+            echo 'One way or another, I have finished'
+            deleteDir() /* clean up our workspace */
         }
         success {
-            echo 'This will run only if successful'
+            echo 'I succeeeded!'
         }
-	post {
-	    mail to: 'aoxiaotian@foxmail.com',
-	         subject: "Failed Pipelin: ${currentBuild.fullDisplayName}",
-		 body: "Somethings is wrong with ${env.BUILD_URL}"
-	}
         unstable {
+            echo 'I am unstable :/'
+        }
+	failure {
+            mail to: 'aoxiaotian@foxmail.com',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Something is wrong with ${env.BUILD_URL}"
         }
         changed {
-            echo 'This will run only if the state of the Pipeline has changed'
-            echo 'For example, if the Pipeline was previously failing but is now successful'
+            echo 'Things were different before...'
         }
     }
 }
-
